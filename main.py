@@ -28,6 +28,8 @@ class SongRequest(BaseModel):
 @app.post("/generate")
 async def generate_ppt(data: SongRequest):
 
+    print("LYRICS RECEIVED:", repr(data.lyrics))
+    
     prs = Presentation("Working Template.pptx")
 
     # -------- TITLE SLIDE --------
