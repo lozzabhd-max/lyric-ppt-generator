@@ -26,12 +26,11 @@ class SongRequest(BaseModel):
     artist: str
 
 @app.post("/generate")
-@app.post("/generate")
 async def generate_ppt(data: SongRequest):
 
     prs = Presentation("Working Template.pptx")
 
-    # --------- SLIDE 1 (Title Slide) ---------
+    # -------- TITLE SLIDE --------
     title_slide = prs.slides[0]
     title_slide.shapes.title.text = data.title
 
@@ -40,9 +39,19 @@ async def generate_ppt(data: SongRequest):
             shape.text_frame.text = f"By {data.artist}"
             break
 
-    # --------- PREPARE LYRIC BLOCKS ---------
+    # -------- NORMALISE LINE BREAKS --------
     normalized_lyrics = data.lyrics.replace("\r\n", "\n")
-blocks = [block.strip() for block in normalized_lyrics.split("\n\n") if block.strip()]
+    blocks = [block.strip() for block in normalized_lyrics.split("\n\n") if block.strip()]
+
+    # If no blocks found, just return title slide
+    if not blocks:
+        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".pptx")
+        prs.save(temp_file.name)
+        return FileResponse(
+            temp_file.name,
+            media_type="application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            filename=f"{data.title}.pptx"
+        )
 
     lyric_template_slide = prs.slides[1]
 
@@ -79,7 +88,7 @@ blocks = [block.strip() for block in normalized_lyrics.split("\n\n") if block.st
                 return shape
         return None
 
-    # --------- FIRST LYRIC SLIDE (USE EXISTING SLIDE 2) ---------
+    # -------- FIRST LYRIC SLIDE --------
     first_slide = prs.slides[1]
     lyrics_box = find_lyrics_box(first_slide)
 
@@ -102,7 +111,7 @@ blocks = [block.strip() for block in normalized_lyrics.split("\n\n") if block.st
             for run in p.runs:
                 run.font.size = Pt(44)
 
-    # --------- REMAINING LYRIC SLIDES ---------
+    # -------- REMAINING SLIDES --------
     for block in blocks[1:]:
         new_slide = duplicate_slide(lyric_template_slide)
         lyrics_box = find_lyrics_box(new_slide)
