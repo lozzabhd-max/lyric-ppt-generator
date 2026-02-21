@@ -32,3 +32,13 @@ async def generate_ppt(data: SongRequest):
         media_type="application/vnd.openxmlformats-officedocument.presentationml.presentation",
         filename=f"{data.title}.pptx"
     )
+    
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # OK for now
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
