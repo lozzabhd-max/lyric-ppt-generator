@@ -145,3 +145,17 @@ async def generate_ppt(data: SongRequest):
         media_type="application/vnd.openxmlformats-officedocument.presentationml.presentation",
         filename=f"{data.title}.pptx"
     )
+
+from flask import Flask
+from flask_cors import CORS
+
+app = Flask(__name__)
+
+CORS(app, resources={
+    r"/*": {
+        "origins": [
+            "https://www.stratumadmissions.co.uk",
+            "https://stratumadmissions.co.uk"
+        ]
+    }
+})
