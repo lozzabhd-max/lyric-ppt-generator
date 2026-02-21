@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from pptx import Presentation
 from openai import OpenAI
@@ -7,8 +8,8 @@ import tempfile
 import os
 
 app = FastAPI()
-from fastapi.middleware.cors import CORSMiddleware
 
+# ✅ CORS — allow your Squarespace domain
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["https://www.stratumadmissions.com"],
@@ -16,6 +17,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 class SongRequest(BaseModel):
@@ -26,10 +28,8 @@ class SongRequest(BaseModel):
 @app.post("/generate")
 async def generate_ppt(data: SongRequest):
 
-    # Create presentation from template
     prs = Presentation("Working Template.pptx")
 
-    # Basic example – replace with your full duplication logic
     slide = prs.slides[0]
     slide.shapes.title.text = data.title
 
@@ -41,13 +41,3 @@ async def generate_ppt(data: SongRequest):
         media_type="application/vnd.openxmlformats-officedocument.presentationml.presentation",
         filename=f"{data.title}.pptx"
     )
-    
-from fastapi.middleware.cors import CORSMiddleware
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # OK for now
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
