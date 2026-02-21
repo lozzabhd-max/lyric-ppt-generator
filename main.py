@@ -13,8 +13,11 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+     "https://slidemysong.com",
+        "https://www.slidemysong.com",
+        # (optional if you still use the old site too)
         "https://www.stratumadmissions.co.uk",
-        "https://stratumadmissions.co.uk"
+        "https://stratumadmissions.co.uk",
     ],
     allow_credentials=True,
     allow_methods=["*"],
