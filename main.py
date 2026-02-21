@@ -7,6 +7,15 @@ import tempfile
 import os
 
 app = FastAPI()
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://www.stratumadmissions.com"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 class SongRequest(BaseModel):
