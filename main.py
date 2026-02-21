@@ -41,7 +41,8 @@ async def generate_ppt(data: SongRequest):
             break
 
     # --------- PREPARE LYRIC BLOCKS ---------
-    blocks = [block.strip() for block in data.lyrics.split("\n\n") if block.strip()]
+    normalized_lyrics = data.lyrics.replace("\r\n", "\n")
+blocks = [block.strip() for block in normalized_lyrics.split("\n\n") if block.strip()]
 
     lyric_template_slide = prs.slides[1]
 
