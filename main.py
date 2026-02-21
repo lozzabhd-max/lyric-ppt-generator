@@ -9,23 +9,13 @@ import os
 
 app = FastAPI()
 
-from flask import Flask
-from flask_cors import CORS
-
-app = Flask(__name__)
-
-CORS(
-    app,
-    resources={r"/*": {"origins": [
-        "https://www.stratumadmissions.co.uk",
-        "https://stratumadmissions.co.uk"
-    ]}},
-    supports_credentials=True
-)
-# ✅ CORS — allow your Squarespace domain
+# ✅ Correct CORS setup for your Squarespace domain
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://www.stratumadmissions.com"],
+    allow_origins=[
+        "https://www.stratumadmissions.co.uk",
+        "https://stratumadmissions.co.uk"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -37,6 +27,7 @@ class SongRequest(BaseModel):
     lyrics: str
     title: str
     artist: str
+
 
 @app.post("/generate")
 async def generate_ppt(data: SongRequest):
@@ -158,17 +149,3 @@ async def generate_ppt(data: SongRequest):
         media_type="application/vnd.openxmlformats-officedocument.presentationml.presentation",
         filename=f"{data.title}.pptx"
     )
-
-from flask import Flask
-from flask_cors import CORS
-
-app = Flask(__name__)
-
-CORS(app, resources={
-    r"/*": {
-        "origins": [
-            "https://www.stratumadmissions.co.uk",
-            "https://stratumadmissions.co.uk"
-        ]
-    }
-})
