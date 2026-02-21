@@ -9,6 +9,19 @@ import os
 
 app = FastAPI()
 
+from flask import Flask
+from flask_cors import CORS
+
+app = Flask(__name__)
+
+CORS(
+    app,
+    resources={r"/*": {"origins": [
+        "https://www.stratumadmissions.co.uk",
+        "https://stratumadmissions.co.uk"
+    ]}},
+    supports_credentials=True
+)
 # ✅ CORS — allow your Squarespace domain
 app.add_middleware(
     CORSMiddleware,
