@@ -1,0 +1,34 @@
+from fastapi import FastAPI
+from fastapi.responses import FileResponse
+from pydantic import BaseModel
+from pptx import Presentation
+from openai import OpenAI
+import tempfile
+import os
+
+app = FastAPI()
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+
+class SongRequest(BaseModel):
+    lyrics: str
+    title: str
+    artist: str
+
+@app.post("/generate")
+async def generate_ppt(data: SongRequest):
+
+    # Create presentation from template
+    prs = Presentation("Working Template.pptx")
+
+    # Basic example – replace with your full duplication logic
+    slide = prs.slides[0]
+    slide.shapes.title.text = data.title
+
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".pptx")
+    prs.save(temp_file.name)
+
+    return FileResponse(
+        temp_file.name,
+        media_type="application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        filename=f"{data.title}.pptx"
+    )
